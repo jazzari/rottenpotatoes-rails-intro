@@ -13,9 +13,14 @@ class MoviesController < ApplicationController
   def index
     # select all type of ratings to create checkboxes in view
     @all_ratings = Movie.all_ratings
-
+    if params[:ratings].nil?
+      # all checkboxes checked the first time
+      @ratings = @all_ratings
+    else
     # collect user selected checkboxes
     @ratings = params[:ratings].keys
+    end
+    # hold selected checkboxes to remember user's selection
     @checked_boxes = @ratings
     
     @movies = Movie.with_ratings(@ratings)
