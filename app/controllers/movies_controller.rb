@@ -11,11 +11,15 @@ class MoviesController < ApplicationController
   end
 
   def index
+    # select all type of ratings to create checkboxes in view
     @all_ratings = Movie.all_ratings
+
+    # collect user selected checkboxes
     @ratings = params[:ratings].keys
     @checked_boxes = @ratings
+    
     @movies = Movie.with_ratings(@ratings)
-    #logger.debug "@movies_checked is: #{@movies_checked}"
+
     # change background color of selected column
     if params[:order].in? %w[release_date]
       @sort = "release_date"
