@@ -9,4 +9,8 @@ class Movie < ActiveRecord::Base
 		end
 	end
 
+	def self.all_ratings
+		@ratings = Movie.distinct.pluck("rating")
+	end
+
 end
