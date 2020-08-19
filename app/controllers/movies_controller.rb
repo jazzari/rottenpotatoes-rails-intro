@@ -12,13 +12,18 @@ class MoviesController < ApplicationController
 
   def index
     @all_ratings = Movie.all_ratings
+    @ratings = params[:ratings].keys
+    @checked_boxes = @ratings
+    @movies = Movie.with_ratings(@ratings)
+    #logger.debug "@movies_checked is: #{@movies_checked}"
+    # change background color of selected column
     if params[:order].in? %w[release_date]
       @sort = "release_date"
     else
       @sort = "title"
     end
     # sort movies from title or release_date columnns
-    @movies = Movie.sort_order(params[:order])
+    #@movies = Movie.sort_order(params[:order])
   end
 
   def new

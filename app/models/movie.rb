@@ -13,4 +13,9 @@ class Movie < ActiveRecord::Base
 		@ratings = Movie.distinct.pluck("rating")
 	end
 
+	def self.with_ratings(ratings)
+		@checked = ratings
+		@ratings = Movie.where(rating: @checked)
+	end
+
 end
