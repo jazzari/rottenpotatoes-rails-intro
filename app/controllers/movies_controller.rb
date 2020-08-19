@@ -22,8 +22,6 @@ class MoviesController < ApplicationController
     end
     # hold selected checkboxes to remember user's selection
     @checked_boxes = @ratings
-    
-    @movies = Movie.with_ratings(@ratings)
 
     # change background color of selected column
     if params[:order].in? %w[release_date]
@@ -31,8 +29,14 @@ class MoviesController < ApplicationController
     else
       @sort = "title"
     end
+
+    if params[:ratings].present?
+      # sort movies from checkboxes
+      @movies = Movie.with_ratings(@ratings)
+    else
     # sort movies from title or release_date columnns
-    #@movies = Movie.sort_order(params[:order])
+      @movies = Movie.sort_order(params[:order])
+    end
   end
 
   def new
