@@ -11,14 +11,13 @@ class MoviesController < ApplicationController
   end
 
   def index
-    @movies = Movie.all
-    if params[:order].in? %w[title]
-      @sort = "title"
-      @movies.merge!(Movie.order("title ASC"))
-    else
+    if params[:order].in? %w[release_date]
       @sort = "release_date"
-      @movies.merge!(Movie.order("release_date ASC"))
+    else
+      @sort = "title"
     end
+    # sort movies from title or release_date columnns
+    @movies = Movie.sort_order(params[:order])
   end
 
   def new
