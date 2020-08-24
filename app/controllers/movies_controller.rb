@@ -13,37 +13,30 @@ class MoviesController < ApplicationController
   def index
     # select all type of ratings to create checkboxes in view
     @all_ratings = Movie.all_ratings
-
+    # first time visiting index page
     if params[:ratings].nil? && params[:order].nil? 
-      #session[:ratings] ||= []
-      logger.debug "beguinner session: #{session[:ratings]}"
       @ratings = session[:ratings]
       session[:ratings] ||= @all_ratings
-      @movies = Movie.with_ratings(session[:ratings])
-      logger.debug "all ratings: #{@all_ratings}"
-      logger.debug "session for first visit: #{session[:ratings]}"
-     
+      @movies = Movie.with_ratings(session[:ratings]) 
     else
       if params[:order].nil? && params[:ratings].any?
+        # the user select checkboxes to filter the view
         session[:ratings] = params[:ratings].keys
         @ratings = session[:ratings]
         @movies = Movie.with_ratings(session[:ratings])
-        logger.debug "session with users selections: #{session[:ratings]}"
       elsif !params[:ratings].nil?
+        # all rating checkboxes selected
         @movies = Movie.with_ratings(session[:ratings])
         logger.debug "session for all ratings: #{session[:ratings]}"
       else
+        # the user filter for columns (title, or release_date)
         @rat_movies = Movie.with_ratings(session[:ratings])
         @movies = @rat_movies.sort_order(params[:order])
         @ratings = session[:ratings]
         logger.debug "session for order: #{session[:ratings]}"
-        logger.debug "params: #{params}"
       end   
-
     end
-
-
-    logger.debug "final session: #{session[:ratings]}"
+    #logger.debug "final session: #{session[:ratings]}"
   end
 
   def new
