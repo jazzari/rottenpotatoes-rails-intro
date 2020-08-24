@@ -13,30 +13,37 @@ class MoviesController < ApplicationController
   def index
     # select all type of ratings to create checkboxes in view
     @all_ratings = Movie.all_ratings
-    if params[:ratings].nil?
-      # all checkboxes checked the first time
-      @ratings = @all_ratings
-    else
-    # collect user selected checkboxes
-    @ratings = params[:ratings].keys
-    end
-    # hold selected checkboxes to remember user's selection
-    @checked_boxes = @ratings
 
-    # change background color of selected column
-    if params[:order].in? %w[release_date]
-      @sort = "release_date"
+    if params[:ratings].nil? && params[:order].nil? 
+      #session[:ratings] ||= []
+      logger.debug "beguinner session: #{session[:ratings]}"
+      @ratings = session[:ratings]
+      session[:ratings] ||= @all_ratings
+      @movies = Movie.with_ratings(session[:ratings])
+      logger.debug "all ratings: #{@all_ratings}"
+      logger.debug "session for first visit: #{session[:ratings]}"
+     
     else
-      @sort = "title"
+      if params[:order].nil? && params[:ratings].any?
+        session[:ratings] = params[:ratings].keys
+        @ratings = session[:ratings]
+        @movies = Movie.with_ratings(session[:ratings])
+        logger.debug "session with users selections: #{session[:ratings]}"
+      elsif !params[:ratings].nil?
+        @movies = Movie.with_ratings(session[:ratings])
+        logger.debug "session for all ratings: #{session[:ratings]}"
+      else
+        @rat_movies = Movie.with_ratings(session[:ratings])
+        @movies = @rat_movies.sort_order(params[:order])
+        @ratings = session[:ratings]
+        logger.debug "session for order: #{session[:ratings]}"
+        logger.debug "params: #{params}"
+      end   
+
     end
 
-    if params[:ratings].present?
-      # sort movies from checkboxes
-      @movies = Movie.with_ratings(@ratings)
-    else
-    # sort movies from title or release_date columnns
-      @movies = Movie.sort_order(params[:order])
-    end
+
+    logger.debug "final session: #{session[:ratings]}"
   end
 
   def new
@@ -68,3 +75,5 @@ class MoviesController < ApplicationController
   end
 
 end
+
+

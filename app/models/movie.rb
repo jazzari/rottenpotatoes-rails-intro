@@ -14,8 +14,7 @@ class Movie < ActiveRecord::Base
 	end
 
 	def self.with_ratings(ratings)
-		@checked = ratings
-		@ratings = Movie.where(rating: @checked)
+		@ratings = Movie.where(rating: (ratings))
 	end
 
 end
